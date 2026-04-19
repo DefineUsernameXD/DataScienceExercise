@@ -1,0 +1,1 @@
+{"coef": [0.0003023597794383337, -0.0001994021462264385, 2.1567536214030016, -3.3856895377870333, 0.2182971839188017], "intercept": 8.02687241623787, "feature_names": ["average_playtime", "achievements", "is_multiplayer", "is_indie", "is_action"]}
