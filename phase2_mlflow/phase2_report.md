@@ -5,7 +5,7 @@
 In this phase, all experiments were logged using MLflow on our local tracking server (`http://localhost:5000`).
 Five different machine learning models were developed and compared to predict the `price` of Steam games based on 10 engineered features: `average_playtime`, `achievements`, `release_year`, `self_published`, `english`, `is_mac`, `is_multiplayer`, `is_indie`, `is_action`, and `is_early_access`.
 
-The parameters, metrics, and generated artifacts were natively logged into the tracking server.
+The parameters, metrics, and generated artifacts were logged into the tracking server.
 
 ---
 
@@ -41,9 +41,9 @@ As visible in the MLflow chart above, `chill-stork-205` (GradientBoostingRegress
 
 ### Dataset Curation Decisions
 To improve model quality, strict data hygiene rules were applied before training:
-- Games priced **below €4.00** (free-to-play, joke pricing) and **above €80** (outlier DLC bundles) were excluded.
-- Games under €6 with **more than 50 achievements** were filtered out as achievement-spam products that distort the pricing signal.
-- Training/test split: `80/20` with **Stratified Sampling** across three price tiers (budget: €4–15, mid: €15–40, premium: €40–80) to guarantee equal AAA and indie representation in both sets.
+- Games priced **below €4.00** and **above €80** were excluded to remove free-to-play titles and outlier bundles.
+- Games priced under €6 with more than 50 achievements were removed, as these are typically achievement-farming products with artificially low prices.
+- The 80/20 train-test split was stratified across three price tiers (€4–15, €15–40, €40–80) to ensure all price segments are represented in both the training and test sets.
 
 ---
 
@@ -61,8 +61,8 @@ A Bonus Step was conducted using `statsmodels` (OLS) to calculate 95% confidence
 
 **What do these results represent?**
 The 95% confidence intervals express the range within which the true coefficient value lies with 95% certainty. For example:
-- `average_playtime` has an interval entirely **above zero** → we are 95% confident that longer playtimes correspond to higher prices.
-- `is_indie` has an interval entirely **below zero** → Indie-tagged games are statistically cheaper on Steam, with high certainty.
-- `release_year` has a **positive interval** → More recent games tend to be priced higher, reflecting inflation and production value trends.
+- `average_playtime`: interval is entirely above zero, meaning longer playtimes are associated with higher prices.
+- `is_indie`: interval is entirely below zero, meaning indie-tagged games are statistically priced lower.
+- `release_year`: positive interval, meaning more recent releases tend to be priced higher.
 
 These intervals are also loaded directly into the Streamlit dashboard (Phase 3) and displayed as the `[95% CI: € X – € Y]` range beneath each prediction.

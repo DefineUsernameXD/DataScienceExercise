@@ -12,8 +12,8 @@
 </head>
 <body>
     <div class="glass-container">
-        <h1>Steam Price Predictor (AAA Extended)</h1>
-        <p class="subtitle">Estimate the optimal launch price utilizing a 14-feature matrix spanning Platform & Category tagging!</p>
+        <h1>Steam Game Price Predictor</h1>
+        <p class="subtitle">Estimate the expected launch price based on 10 game features.</p>
         
         <form id="prediction-form">
             <div class="form-grid">
@@ -44,7 +44,7 @@
                         </div>
                     </div>
                     
-                    <label style="margin-top:20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom:5px;">Target OS Networks</label>
+                    <label style="margin-top:20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom:5px;">Platform</label>
                     <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="is_windows" checked disabled><span class="slider round" style="cursor: not-allowed; opacity: 0.5;"></span></label><span class="toggle-label" style="opacity: 0.5;">Windows (Mandatory)</span></div>
                     <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="is_mac"><span class="slider round"></span></label><span class="toggle-label">Mac OS</span></div>
                 </div>
@@ -52,26 +52,26 @@
                 <!-- COLUMN 2: Categorical Features -->
                 <div class="column-right">
                     
-                    <label style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom:5px;">Dev / Scope Logic</label>
-                    <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="self_published" checked><span class="slider round"></span></label><span class="toggle-label">Self-Published (Anti-AAA)</span></div>
+                    <label style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom:5px;">Publisher</label>
+                    <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="self_published" checked><span class="slider round"></span></label><span class="toggle-label">Self-Published</span></div>
                     <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="english" checked><span class="slider round"></span></label><span class="toggle-label">English Available</span></div>
                     <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="is_early_access"><span class="slider round"></span></label><span class="toggle-label">Early Access</span></div>
                     
                     <label style="margin-top:20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom:5px;">Store Tags & Genres</label>
-                    <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="is_multiplayer"><span class="slider round"></span></label><span class="toggle-label">Multiplayer Core</span></div>
-                    <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="is_indie" checked><span class="slider round"></span></label><span class="toggle-label">Indie Definition</span></div>
-                    <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="is_action"><span class="slider round"></span></label><span class="toggle-label">Action Combat</span></div>
+                    <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="is_multiplayer"><span class="slider round"></span></label><span class="toggle-label">Multiplayer</span></div>
+                    <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="is_indie" checked><span class="slider round"></span></label><span class="toggle-label">Indie</span></div>
+                    <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="is_action"><span class="slider round"></span></label><span class="toggle-label">Action</span></div>
                 </div>
                 
             </div>
 
-            <button type="button" class="btn-predict" onclick="predictPrice()">Calculate Optimal Price</button>
+            <button type="button" class="btn-predict" onclick="predictPrice()">Calculate Price</button>
         </form>
         
         <div id="result-container" class="hidden">
             <h2>Predicted Price</h2>
             <div class="price-value" id="price_result">$0.00</div>
-            <p class="insight" id="price_insight">Based on the optimized 10 feature vectors.</p>
+            <p class="insight" id="price_insight">Based on 10 trained features.</p>
         </div>
     </div>
 

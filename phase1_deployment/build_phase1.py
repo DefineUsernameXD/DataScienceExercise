@@ -81,7 +81,7 @@ print("Saved model.json mapping 15 features")
 nb = nbf.v4.new_notebook()
 
 nb['cells'] = [
-    nbf.v4.new_markdown_cell("# Phase 1: Classic ML with Scikit-learn & Web Deployment\n\nThis notebook demonstrates a full MLOps Phase 1 workflow: exploratory data analysis, data preparation, model training with Scikit-learn, evaluation, and export to a JSON format for browser-side prediction via ML.js.\n\n**Dataset**: Steam Store Games (~27,000 games)\n**Problem**: Regression – predict the retail price of a Steam game based on 10 engineered features.\n**Target variable**: `price` (EUR)"),
+    nbf.v4.new_markdown_cell("# Phase 1: Classic ML with Scikit-learn & Web Deployment\n\nThis notebook covers the full Phase 1 workflow: data loading, exploratory analysis, model training with Scikit-learn, evaluation, and export for browser-side prediction via ML.js.\n\n**Dataset**: Steam Store Games (~27,000 games)\n**Task**: Regression – predict the retail price of a Steam game based on 10 features.\n**Target variable**: `price` (EUR)"),
     nbf.v4.new_code_cell("""import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -90,7 +90,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import json"""),
 
-    nbf.v4.new_markdown_cell("## 1. Data Loading & Feature Engineering\n\nWe load the Steam dataset and engineer 10 binary and numeric features from raw columns."),
+    nbf.v4.new_markdown_cell("## 1. Data Loading & Feature Engineering\n\nThe Steam dataset is loaded and 10 features are extracted from raw columns."),
     nbf.v4.new_code_cell("""df = pd.read_csv("steam.csv")
 def has_term(val, target):
     if not isinstance(val, str): return 0
@@ -120,7 +120,7 @@ print(f"Dataset shape after cleaning: {df_clean.shape}")
 print(f"Price range: €{df_clean['price'].min():.2f} – €{df_clean['price'].max():.2f}")
 df_clean[features + [target]].describe()"""),
 
-    nbf.v4.new_markdown_cell("## 2. Exploratory Data Analysis (EDA)\n\nBefore training, we inspect the distribution of our target variable and the correlation structure of our features."),
+    nbf.v4.new_markdown_cell("## 2. Exploratory Data Analysis (EDA)\n\nWe examine the distribution of the target variable and the correlation structure of features before training."),
     nbf.v4.new_code_cell("""# --- 2.1 Price Distribution ---
 fig, axes = plt.subplots(1, 2, figsize=(14, 4))
 
@@ -177,7 +177,7 @@ plt.tight_layout()
 plt.savefig('eda_feature_prevalence.png', dpi=120, bbox_inches='tight')
 plt.show()"""),
 
-    nbf.v4.new_markdown_cell("## 3. Model Training & Validation\n\nWe use a Stratified 80/20 split (stratified by price tier) to ensure all pricing tiers are represented in both train and test sets."),
+    nbf.v4.new_markdown_cell("## 3. Model Training & Validation\n\nAn 80/20 train-test split is used, stratified by price tier to ensure even representation of budget, mid-tier and premium games in both sets."),
     nbf.v4.new_code_cell("""X = df_clean[features]
 y = df_clean[target]
 df_clean['price_tier'] = pd.cut(df_clean['price'], bins=[0, 15, 40, 100], labels=[1, 2, 3])
@@ -191,7 +191,7 @@ print(f"MAE:  {mean_absolute_error(y_test, y_pred):.2f} €")
 print(f"RMSE: {np.sqrt(mean_squared_error(y_test, y_pred)):.2f} €")
 print(f"R²:   {r2_score(y_test, y_pred):.3f}")"""),
 
-    nbf.v4.new_markdown_cell("## 4. Web Export API Generation\n\nThe trained Linear Regression model is exported as `model.json` so it can be loaded directly in the browser via `ML.js` without any server-side backend."),
+    nbf.v4.new_markdown_cell("## 4. Model Export\n\nThe trained model is exported as `model.json` containing the coefficients and intercept, which can be loaded directly in the browser via `ML.js`."),
     nbf.v4.new_code_cell("""model_data = {
     "coef": model.coef_.tolist(),
     "intercept": float(model.intercept_),

@@ -6,9 +6,9 @@ import mlflow
 import mlflow.sklearn
 import statsmodels.api as sm
 
-st.set_page_config(page_title="Steam Price Predictor", layout="wide", page_icon="🎮")
-st.title("📊 Steam Game Price Predictor Dashboard (10 Features)")
-st.markdown("Use this dashboard to evaluate the expected market price of your next indie game.")
+st.set_page_config(page_title="Steam Price Predictor", layout="wide")
+st.title("Steam Game Price Predictor (10 Features)")
+st.markdown("Estimate the expected market price of a Steam game based on its planned features.")
 
 @st.cache_resource
 def load_mlflow_model_and_artifact(_cache_buster="v11_Optimized"):
@@ -68,25 +68,25 @@ model, artefact_ci_df = load_mlflow_model_and_artifact()
 lr_sm, feature_names = load_ols_for_ci()
 
 # --- Sidebar Inputs ---
-st.sidebar.header("🛠️ Feature Engineering (10 Features)")
+st.sidebar.header("Feature Inputs (10 Features)")
 
 playtime_input = st.sidebar.slider("Target Average Playtime (Minutes)", min_value=0, max_value=20000, value=300, step=30)
 achievements_input = st.sidebar.slider("Planned Achievements", min_value=0, max_value=1000, value=25, step=1)
 release_year = st.sidebar.slider("Target Release Year", min_value=2000, max_value=2026, value=2024, step=1)
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("**Network OS & Publisher Target**")
-is_windows = st.sidebar.checkbox("Windows Support", True, disabled=True)
-is_mac = st.sidebar.checkbox("Mac OS Support", False)
-self_published = st.sidebar.checkbox("Self-Published (Anti-AAA)", True)
-english = st.sidebar.checkbox("English Translation Available", True)
+st.sidebar.markdown("**Platform**")
+is_windows = st.sidebar.checkbox("Windows", True, disabled=True)
+is_mac = st.sidebar.checkbox("Mac OS", False)
+self_published = st.sidebar.checkbox("Self-Published", True)
+english = st.sidebar.checkbox("English Available", True)
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("**Store Tags / Genres**")
-is_multiplayer = st.sidebar.checkbox("Multiplayer Core", False)
-is_indie = st.sidebar.checkbox("Indie Class", True)
-is_action = st.sidebar.checkbox("Action Combat", False)
-is_early_access = st.sidebar.checkbox("Early Access Build", False)
+is_multiplayer = st.sidebar.checkbox("Multiplayer", False)
+is_indie = st.sidebar.checkbox("Indie", True)
+is_action = st.sidebar.checkbox("Action", False)
+is_early_access = st.sidebar.checkbox("Early Access", False)
 
 input_data = pd.DataFrame([{
     "average_playtime": playtime_input,
@@ -105,8 +105,8 @@ st.markdown("---")
 col1, col2 = st.columns([1, 2])
 
 with col1:
-    st.header("🔮 Prediction")
-    if st.button("Calculate Optimal Price"):
+    st.header("Prediction")
+    if st.button("Calculate Price"):
         if model is not None:
             pred = model.predict(input_data)[0]
             pred = max(0, pred)
@@ -134,8 +134,8 @@ with col1:
             st.warning("Model isn't loaded correctly.")
 
 with col2:
-    st.header("💡 Key Insights")
-    st.markdown("Understanding what dictates the MLflow Production Model decisions.")
+    st.header("Key Insights")
+    st.markdown("Feature importance as determined by the production model.")
     
     if model is not None and hasattr(model, 'feature_importances_'):
         importances = model.feature_importances_
