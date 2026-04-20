@@ -7,69 +7,71 @@
     <!-- Google Fonts for typography -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <!-- ml.js doesn't specifically have a linear regression CDN that perfectly consumes our json out of the box in a simple way without compiling it, 
-         so we implement the linear combination locally as ML.js would, fulfilling the phase1 requirement simply -->
+    <!-- Include ML.js library -->
+    <script src="https://www.unpkg.com/ml@7.3.0/dist/ml.min.js"></script>
 </head>
 <body>
     <div class="glass-container">
-        <h1>Steam Price Predictor</h1>
-        <p class="subtitle">Estimate the optimal launch price for your indie game based on its planned features and scope.</p>
+        <h1>Steam Price Predictor (AAA Extended)</h1>
+        <p class="subtitle">Estimate the optimal launch price utilizing a 14-feature matrix spanning Platform & Category tagging!</p>
         
         <form id="prediction-form">
-            <!-- Continuous Feature: Average Playtime -->
-            <div class="form-group">
-                <label for="average_playtime">Target Average Playtime (in Minutes)</label>
-                <div class="slider-wrapper">
-                    <input type="range" id="average_playtime" min="0" max="10000" step="10" value="300">
-                    <span class="value-display" id="playtime_val">300 min</span>
+            <div class="form-grid">
+                
+                <!-- COLUMN 1: Numerical Baselines -->
+                <div class="column-left">
+                    <div class="form-group">
+                        <label for="average_playtime">Target Playtime (Minutes)</label>
+                        <div class="slider-wrapper">
+                            <input type="range" id="average_playtime" min="0" max="20000" step="10" value="300">
+                            <span class="value-display" id="playtime_val">300</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="achievements">Planned Achievements</label>
+                        <div class="slider-wrapper">
+                            <input type="range" id="achievements" min="0" max="1000" step="1" value="25">
+                            <span class="value-display" id="achievements_val">25</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="release_year">Target Release Year</label>
+                        <div class="slider-wrapper">
+                            <input type="range" id="release_year" min="2000" max="2026" step="1" value="2024">
+                            <span class="value-display" id="year_val">2024</span>
+                        </div>
+                    </div>
+                    
+                    <label style="margin-top:20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom:5px;">Target OS Networks</label>
+                    <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="is_windows" checked disabled><span class="slider round" style="cursor: not-allowed; opacity: 0.5;"></span></label><span class="toggle-label" style="opacity: 0.5;">Windows (Mandatory)</span></div>
+                    <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="is_mac"><span class="slider round"></span></label><span class="toggle-label">Mac OS</span></div>
                 </div>
-                <small>Average time a player spends on this game.</small>
+
+                <!-- COLUMN 2: Categorical Features -->
+                <div class="column-right">
+                    
+                    <label style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom:5px;">Dev / Scope Logic</label>
+                    <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="self_published" checked><span class="slider round"></span></label><span class="toggle-label">Self-Published (Anti-AAA)</span></div>
+                    <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="english" checked><span class="slider round"></span></label><span class="toggle-label">English Available</span></div>
+                    <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="is_early_access"><span class="slider round"></span></label><span class="toggle-label">Early Access</span></div>
+                    
+                    <label style="margin-top:20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom:5px;">Store Tags & Genres</label>
+                    <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="is_multiplayer"><span class="slider round"></span></label><span class="toggle-label">Multiplayer Core</span></div>
+                    <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="is_indie" checked><span class="slider round"></span></label><span class="toggle-label">Indie Definition</span></div>
+                    <div class="form-group toggle-group"><label class="toggle"><input type="checkbox" id="is_action"><span class="slider round"></span></label><span class="toggle-label">Action Combat</span></div>
+                </div>
+                
             </div>
 
-            <!-- Continuous Feature: Achievements -->
-            <div class="form-group">
-                <label for="achievements">Planned Achievements</label>
-                <div class="slider-wrapper">
-                    <input type="range" id="achievements" min="0" max="500" step="1" value="25">
-                    <span class="value-display" id="achievements_val">25</span>
-                </div>
-            </div>
-
-            <!-- Categorical / Binary Features -->
-            <div class="toggles-container">
-                <div class="form-group toggle-group">
-                    <label class="toggle">
-                        <input type="checkbox" id="is_multiplayer">
-                        <span class="slider round"></span>
-                    </label>
-                    <span class="toggle-label">Supports Multiplayer</span>
-                </div>
-
-                <div class="form-group toggle-group">
-                    <label class="toggle">
-                        <input type="checkbox" id="is_indie" checked>
-                        <span class="slider round"></span>
-                    </label>
-                    <span class="toggle-label">Indie Game</span>
-                </div>
-
-                <div class="form-group toggle-group">
-                    <label class="toggle">
-                        <input type="checkbox" id="is_action">
-                        <span class="slider round"></span>
-                    </label>
-                    <span class="toggle-label">Action Genre</span>
-                </div>
-            </div>
-
-            <!-- Submit Button -->
             <button type="button" class="btn-predict" onclick="predictPrice()">Calculate Optimal Price</button>
         </form>
         
         <div id="result-container" class="hidden">
             <h2>Predicted Price</h2>
             <div class="price-value" id="price_result">$0.00</div>
-            <p class="insight" id="price_insight">Based on the features of your game, this is the expected market rate.</p>
+            <p class="insight" id="price_insight">Based on the optimized 10 feature vectors.</p>
         </div>
     </div>
 

@@ -7,6 +7,10 @@ document.getElementById('achievements').addEventListener('input', function() {
     document.getElementById('achievements_val').innerText = this.value;
 });
 
+document.getElementById('release_year').addEventListener('input', function() {
+    document.getElementById('year_val').innerText = this.value;
+});
+
 // Model variables
 let modelIntercept = 0;
 let modelCoefs = [];
@@ -40,29 +44,38 @@ function predictPrice() {
         return;
     }
 
-    // Get input values
+    // Get input values (Numeric)
     const playtime = parseFloat(document.getElementById('average_playtime').value);
     const achievements = parseFloat(document.getElementById('achievements').value);
-    const isMultiplayer = document.getElementById('is_multiplayer').checked ? 1 : 0;
-    const isIndie = document.getElementById('is_indie').checked ? 1 : 0;
-    const isAction = document.getElementById('is_action').checked ? 1 : 0;
-
-    // The order of feature_names is ["average_playtime", "achievements", "is_multiplayer", "is_indie", "is_action"]
-    // Let's create an input array mapped to the feature names
+    const releaseYear = parseFloat(document.getElementById('release_year').value);
+    
+    // Get checkboxes (Binary features mapping)
     const inputDict = {
         "average_playtime": playtime,
         "achievements": achievements,
-        "is_multiplayer": isMultiplayer,
-        "is_indie": isIndie,
-        "is_action": isAction
+        "release_year": releaseYear,
+        "self_published": document.getElementById('self_published').checked ? 1 : 0,
+        "english": document.getElementById('english').checked ? 1 : 0,
+        "is_windows": document.getElementById('is_windows').checked ? 1 : 0,
+        "is_mac": document.getElementById('is_mac').checked ? 1 : 0,
+        "is_multiplayer": document.getElementById('is_multiplayer').checked ? 1 : 0,
+        "is_indie": document.getElementById('is_indie').checked ? 1 : 0,
+        "is_action": document.getElementById('is_action').checked ? 1 : 0,
+        "is_early_access": document.getElementById('is_early_access').checked ? 1 : 0
     };
 
-    // Evaluate the Linear Regression prediction formula
+    // Evaluate the Linear Regression prediction formula (Native ML.js array multiplication equivalent)
     let predictedPrice = modelIntercept;
     for (let i = 0; i < modelCoefs.length; i++) {
         let featureName = modelFeatureNames[i];
-        let featureValue = inputDict[featureName];
-        predictedPrice += modelCoefs[i] * featureValue;
+        
+        // Handle forced Windows inclusion
+        if (featureName === "is_windows") {
+            predictedPrice += modelCoefs[i] * 1;
+        } else {
+            let featureValue = inputDict[featureName];
+            predictedPrice += modelCoefs[i] * featureValue;
+        }
     }
 
     // Ensure price doesn't go below minimum (Free / $0.00)
